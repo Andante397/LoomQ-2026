@@ -135,3 +135,19 @@ python3 evaluator.py --level l2
 ## 版本政策
 
 合同版本为 `1.0`。开赛后，`1.x` 只允许增加向后兼容的文档、诊断信息和公开测试，不改变已有接口语义；破坏性修改必须发布新的合同版本并为旧版保留评测通道。
+
+## 本队实现说明 (andante397)
+
+L1 已实现后端：`braket`（AWS Braket LocalSimulator）与 `originq`（本源 pyqpanda3 CPUQVM）。
+
+未实现 `spinq`：`pip install spinqit` 在 PyPI 上无可用分发
+（`No matching distribution found for spinqit`），赛题时限内无法接入。
+
+自检命令：
+
+    python starter_kit/evaluator.py --target braket,originq
+
+结果：4/4 通过，保真度达标。
+
+架构：QASM 文本 → 解析器 → 统一 IR → 各后端 codegen / execute → 位序归一化 → 统一 Schema。
+新增后端只需实现 `Backend` 子类并注册到 `BACKENDS`，解析器无需改动。
